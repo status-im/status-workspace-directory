@@ -32,8 +32,6 @@ def populate_employees():
     headers = {
         'Accept': "application/json",
         'Authorization': "Basic %s" % BAMBOO_HR_TOKEN,
-        'Cache-Control': "no-cache",
-        'Postman-Token': "79899eff-ff5a-9cf4-54a3-cae252b74d10"
     }
     resp = requests.request("GET", url, headers=headers)
 
