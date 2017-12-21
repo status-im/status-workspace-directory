@@ -17,7 +17,7 @@ app = Flask(__name__)
 def rget(key, default=None):
     val = r_handler.get(r_postfix + ":" + key)
     if val:
-        return json.loads(val)
+        return json.loads(val.decode())
     return default
 
 
