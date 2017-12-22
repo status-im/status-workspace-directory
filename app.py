@@ -36,7 +36,7 @@ def populate_employees():
     resp = requests.request("GET", url, headers=headers)
 
     employees = resp.json()["employees"]
-    employees_name_map = {emp["preferredName"]: emp for emp in employees}
+    employees_name_map = {emp["skypeUsername"]: emp for emp in employees}
 
     rset('employees', employees)
     rset('employees_name_map', employees_name_map)
@@ -67,12 +67,14 @@ def slash_command():
 *Job Title*: {}
 *Department*: {}
 *Location*: {}
+*GH*: <https://www.github.com/{}|{}>
     """.format(
         emp["id"],
         emp["displayName"],
         emp["jobTitle"],
         emp["department"],
         emp["location"],
+        emp["facebook"], emp["facebook"]
     )
 
     return profile_txt
