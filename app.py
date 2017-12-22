@@ -67,14 +67,14 @@ def slash_command():
 *Job Title*: {}
 *Department*: {}
 *Location*: {}
-*GH*: <https://www.github.com/{}|{}>
+*GH*: {}
     """.format(
         emp["id"],
         emp["displayName"],
         emp["jobTitle"],
         emp["department"],
         emp["location"],
-        emp["facebook"], emp["facebook"]
+        emp["facebook"]
     )
 
     return profile_txt
