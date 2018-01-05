@@ -1,13 +1,12 @@
 import os
 import redis
 import json
-import requests
+from bamboo_employees import get_employees
 
 from flask import request, abort
 from flask import Flask
 
 
-BAMBOO_HR_TOKEN = os.environ.get('BAMBOO_HR_TOKEN')
 SLACK_BOT_TOKEN = os.environ.get('SLACK_BOT_TOKEN')
 r_handler = redis.StrictRedis(host='localhost', port=6379, db=0)
 r_postfix = 'swd'
@@ -25,24 +24,15 @@ def rset(key, val):
     r_handler.set(r_postfix + ":" + key, json.dumps(val))
 
 
-def populate_employees():
-    print('Populating employees')
-    url = "https://api.bamboohr.com/api/gateway.php/statusim/v1/employees/directory"
+def gh_username(instr):
+    if instr.startswith("http"):
+        return instr.split("/")[-1]
+    return instr
 
-    headers = {
-        'Accept': "application/json",
-        'Authorization': "Basic %s" % BAMBOO_HR_TOKEN,
-    }
-    resp = requests.request("GET", url, headers=headers)
-
-    employees = resp.json()["employees"]
-    employees_name_map = {emp["skypeUsername"]: emp for emp in employees}
-
-    rset('employees', employees)
-    rset('employees_name_map', employees_name_map)
-
-
-populate_employees()
+# Populate employees.
+employees, employees_name_map = get_employees()
+rset('employees', employees)
+rset('employees_name_map', employees_name_map)
 
 
 @app.route('/', methods=['POST'])
