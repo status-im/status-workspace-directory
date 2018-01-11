@@ -8,17 +8,32 @@ if not BAMBOO_HR_TOKEN:
     print('Need bamboohr token')
     sys.exit()
 
+headers = {
+    'Accept': "application/json",
+    'Authorization': "Basic %s" % BAMBOO_HR_TOKEN,
+}
+
 
 def get_employees():
     url = "https://api.bamboohr.com/api/gateway.php/statusim/v1/employees/directory"
 
-    headers = {
-        'Accept': "application/json",
-        'Authorization': "Basic %s" % BAMBOO_HR_TOKEN,
-    }
-    resp = requests.request("GET", url, headers=headers)
-    print(resp)
+    resp = requests.get(url, headers=headers)
+
     employees = resp.json()["employees"]
     employees_name_map = {emp["skypeUsername"]: emp for emp in employees}
 
     return employees, employees_name_map
+
+
+def get_employee(employee_id):
+
+    url = "https://api.bamboohr.com/api/gateway.php/statusim/v1/employees/{}".format(
+        employee_id
+    )
+
+    params = {
+        'fields': ','.join(('supervisor', 'supervisorId', 'supervisorEId'))
+    }
+    resp = requests.get(url, params=params, headers=headers)
+
+    return resp.json()

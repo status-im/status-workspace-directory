@@ -1,5 +1,6 @@
 from slack_members import map_member_ids, set_profile, get_profile
 from bamboo_employees import get_employees
+from github import get_issues_assigned_to
 
 _, employees_name_map = get_employees()
 slack_profile_map = map_member_ids()
@@ -15,7 +16,7 @@ for slack_name, slack_user in slack_profile_map.items():
     bamboo_details = employees_name_map.get(slack_name)
 
     if slack_name == 'cryptowanderer':
-        print(bamboo_details)
+        github_username = gh_username(bamboo_details["facebook"])
         payload = {
             "title": bamboo_details["jobTitle"],
             "phone": bamboo_details["mobilePhone"],
@@ -29,11 +30,16 @@ for slack_name, slack_user in slack_profile_map.items():
                     "alt": ""
                 },
                 "Xf8ME3KUM9": {  # Github
-                    "value": gh_username(bamboo_details["facebook"]),
+                    "value": github_username,
                     "alt": ""
                 }
             }
         }
+
+        print('%s issues: ' % github_username)
+        assigned_issues = get_issues_assigned_to(github_username)
+        for issue in assigned_issues:
+            print(issue)
 
         print('payload:')
         print(payload)
