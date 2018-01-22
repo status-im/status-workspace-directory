@@ -32,7 +32,7 @@ def get_employee(employee_id):
     )
 
     params = {
-        'fields': ','.join(('supervisor', 'supervisorId', 'supervisorEId'))
+        'fields': ','.join(('supervisor', 'supervisorId', 'supervisorEId', 'hireDate'))
     }
     resp = requests.get(url, params=params, headers=headers)
 
