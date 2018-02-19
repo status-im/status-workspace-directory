@@ -29,3 +29,12 @@ BAMBOO_HR_TOKEN
 SLACK_BOT_TOKEN
 SLACK_API_TOKEN
 GEEKBOT_API_TOKEN
+
+## Run in docker
+
+To run the basic fetch-and-set script in docker:
+
+```
+docker build -t swd ./
+docker run --env-file env.list swd
+```
