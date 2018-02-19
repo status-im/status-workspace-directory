@@ -25,10 +25,10 @@ This is set in the "Latest standup" field on slack.
 
 ## Required Environment Variables
 
-BAMBOO_HR_TOKEN
-SLACK_BOT_TOKEN
-SLACK_API_TOKEN
-GEEKBOT_API_TOKEN
+BAMBOO_HR_TOKEN  
+SLACK_BOT_TOKEN  
+SLACK_API_TOKEN  
+GEEKBOT_API_TOKEN  
 
 ## Run in docker
 
