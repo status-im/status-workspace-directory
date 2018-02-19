@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+import time
+
 from slack_members import map_member_ids, set_profile, get_profile
 from bamboo_employees import get_employees, get_employee
 from github import get_issues_assigned_to
@@ -95,4 +99,7 @@ def final_set():
 
 
 if __name__ == '__main__':
-    final_set()
+    while True:
+        final_set()
+        print('Sleeping for 1h')
+        time.sleep(3600)
