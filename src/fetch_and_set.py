@@ -32,6 +32,7 @@ def add_trailing_slash(instr, length=245):
 
 
 def final_set():
+
     for slack_name, slack_user in slack_profile_map.items():
         bamboo_details = employees_name_map.get(slack_name)
 
@@ -83,9 +84,15 @@ def final_set():
                     "Xf8QPT2ECR": {  # Latest standup
                         "value": add_trailing_slash(standup_str),
                         "alt": ""
-                    }
+                    },
                 }
             }
+
+            if bamboo_details["twitterFeed"]:
+                payload["fields"]["Xf8MDHK94H"] = {  # Set Status Public Key
+                    "value": bamboo_details["twitterFeed"],
+                    "alt": ""
+                }
 
             res = set_profile(slack_user["id"], payload)
         except Exception as e:
