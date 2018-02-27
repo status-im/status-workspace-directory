@@ -1,7 +1,12 @@
+import json
+import hashlib
+from pathlib import Path
+
 from slack_members import map_member_ids, set_profile, get_profile
 from bamboo_employees import get_employees, get_employee
-from github import get_issues_assigned_to
+from github import get_issues_assigned_to, upload_contacts_to_gist
 from geekbot_standups import get_latest_standup
+
 
 _, employees_name_map = get_employees()
 slack_profile_map = map_member_ids()
@@ -27,7 +32,30 @@ def add_trailing_slash(instr, length=245):
         return instr[:length] + '...'
 
 
+def write_out_public_keys(public_keys):
+
+    existing_contacts = {}
+    if Path('contacts.json').exists():
+        with open('contacts.json', 'r') as f:
+            existing_contacts = json.load(f)
+
+    updated_contacts = False
+    for k in public_keys.keys():
+        if k not in existing_contacts:
+            updated_contacts = True
+            break
+
+    if updated_contacts:
+        print('New public key(s) found writing contacts.json')
+        with open('contacts.json', 'w') as f:
+            json.dump(public_keys, f)
+        if upload_contacts_to_gist('contacts.json'):
+            print('Uploaded gist successfully')
+        else:
+            print('Failed to upload gist')
+
 def final_set():
+    public_keys = {}
 
     for slack_name, slack_user in slack_profile_map.items():
         bamboo_details = employees_name_map.get(slack_name)
@@ -85,9 +113,20 @@ def final_set():
             }
 
             if bamboo_details["twitterFeed"]:
+                pub_key = bamboo_details["twitterFeed"]
                 payload["fields"]["Xf8MDHK94H"] = {  # Set Status Public Key
-                    "value": bamboo_details["twitterFeed"],
+                    "value": pub_key,
                     "alt": ""
+                }
+                public_keys[pub_key] = {  # kept for json contacts file.
+                    "name": {
+                        "en":  ' '.join([
+                            bamboo_details.get('firstName', ''),
+                            bamboo_details.get('lastName', '')])
+                    },
+                    "photo-path": "",
+                    "add-chat?": False,
+                    "dapp?": False
                 }
 
             res = set_profile(slack_user["id"], payload)
@@ -99,6 +138,8 @@ def final_set():
             print('Failed to set: ' + slack_name)
         else:
             print('Profile set: ', slack_name)
+
+    write_out_public_keys(public_keys)
 
 
 if __name__ == '__main__':
