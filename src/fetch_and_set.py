@@ -1,7 +1,8 @@
+#!/usr/bin/env python3
 import json
-import hashlib
-from pathlib import Path
+import time
 
+from pathlib import Path
 from slack_members import map_member_ids, set_profile, get_profile
 from bamboo_employees import get_employees, get_employee
 from github import get_issues_assigned_to, upload_contacts_to_gist
@@ -55,7 +56,22 @@ def write_out_public_keys(public_keys):
             print('Failed to upload gist')
 
 def final_set():
+    # Create json contact file.
     public_keys = {}
+    for _, bamboo_details in employees_name_map.items():
+        pub_key = bamboo_details["twitterFeed"]
+        if pub_key and pub_key.startswith('0x'):
+            public_keys[pub_key] = {  # kept for json contacts file.
+                "name": {
+                    "en":  ' '.join([
+                        bamboo_details.get('firstName', ''),
+                        bamboo_details.get('lastName', '')])
+                },
+                "photo-path": bamboo_details.get('photoUrl', ''),
+                "add-chat?": False,
+                "dapp?": False
+            }
+    write_out_public_keys(public_keys)
 
     for slack_name, slack_user in slack_profile_map.items():
         bamboo_details = employees_name_map.get(slack_name)
@@ -118,16 +134,6 @@ def final_set():
                     "value": pub_key,
                     "alt": ""
                 }
-                public_keys[pub_key] = {  # kept for json contacts file.
-                    "name": {
-                        "en":  ' '.join([
-                            bamboo_details.get('firstName', ''),
-                            bamboo_details.get('lastName', '')])
-                    },
-                    "photo-path": "",
-                    "add-chat?": False,
-                    "dapp?": False
-                }
 
             res = set_profile(slack_user["id"], payload)
         except Exception as e:
@@ -139,8 +145,9 @@ def final_set():
         else:
             print('Profile set: ', slack_name)
 
-    write_out_public_keys(public_keys)
-
 
 if __name__ == '__main__':
-    final_set()
+    while True:
+        final_set()
+        print('Sleeping for 1h')
+        time.sleep(3600)
