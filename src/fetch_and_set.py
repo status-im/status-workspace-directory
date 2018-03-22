@@ -55,6 +55,7 @@ def write_out_public_keys(public_keys):
         else:
             print('Failed to upload gist')
 
+
 def final_set():
     # Create json contact file.
     public_keys = {}
@@ -63,7 +64,7 @@ def final_set():
         if pub_key and pub_key.startswith('0x'):
             public_keys[pub_key] = {  # kept for json contacts file.
                 "name": {
-                    "en":  ' '.join([
+                    "en": ' '.join([
                         bamboo_details.get('firstName', ''),
                         bamboo_details.get('lastName', '')])
                 },
@@ -129,8 +130,19 @@ def final_set():
             }
 
             if bamboo_details["twitterFeed"]:
-                pub_key = bamboo_details["twitterFeed"]
-                payload["fields"]["Xf8MDHK94H"] = {  # Set Status Public Key
+                mainnent_public_key = None
+                pub_key = None
+
+                pubkeys = bamboo_details["twitterFeed"].split('|')
+                if len(pubkeys) == 2:
+                    mainnent_public_key, pub_key = pubkeys
+                    payload["fields"]["Xf9V4RJCT0"] = {   # Set Mainnet Status Public Key
+                        "value": mainnent_public_key
+                    }
+                else:
+                    pub_key = pubkeys[0]
+
+                payload["fields"]["Xf8MDHK94H"] = {  # Set Testnet Status Public Key
                     "value": pub_key,
                     "alt": ""
                 }
