@@ -18,4 +18,4 @@ RUN pip install -r /opt/swd/requirements.txt
 RUN chmod +x /opt/swd/fetch_and_set.py
 
 # Define default command.
-CMD ["/opt/swd/fetch_and_set.py"]
+CMD ["python3","-u","/opt/swd/fetch_and_set.py"]

@@ -20,7 +20,7 @@ def get_employees():
     resp = requests.get(url, headers=headers)
 
     employees = resp.json()["employees"]
-    employees_name_map = {emp["skypeUsername"]: emp for emp in employees}
+    employees_name_map = {emp["skypeUsername"].lower(): emp for emp in employees if emp["skypeUsername"]}
 
     return employees, employees_name_map
 
