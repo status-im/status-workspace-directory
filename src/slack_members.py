@@ -12,7 +12,7 @@ sc = SlackClient(slack_token)
 def map_member_ids():
     res = sc.api_call("users.list")
     return {
-        member['name']: member
+        member['profile']['display_name']: member
         for member in res['members']
     }
 

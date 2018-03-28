@@ -25,6 +25,10 @@ def get_latest_standup(user_id, standup_id=12889):
         "after": (datetime.datetime.now() - datetime.timedelta(days=1)).timestamp()
     }
     resp = requests.get(url, params=params, headers=headers)
+
+    if resp.status_code != 200:
+        return None
+
     standups = resp.json()
 
     if standups:
