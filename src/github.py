@@ -20,26 +20,26 @@ def get_issues_assigned_to(username):
 
 
 def upload_contacts_to_gist(file_path):
-	url = "https://api.github.com/gists/%s" % GIST_ID
+    url = "https://api.github.com/gists/%s" % GIST_ID
 
-	with open(file_path, 'r') as f:
-		content = f.read()
-		params = {
-			"description": "the description for this gist",
-	  		"files": {
-	  			"contacts.json": {
-	  				'content': content
-	  			}
-	  		}
-		}
+    with open(file_path, 'r') as f:
+        content = f.read()
+        params = {
+            "description": "the description for this gist",
+            "files": {
+                "contacts.json": {
+                    'content': content
+                }
+            }
+        }
 
-		resp = requests.patch(
-			url,
-			auth=(GIST_API_USER, GIST_API_KEY),
-			json=params
-		)
+        resp = requests.patch(
+            url,
+            auth=(GIST_API_USER, GIST_API_KEY),
+            json=params
+        )
 
-		if resp.status_code == 200:
-			return True
-		else:
-			return False
+        if resp.status_code == 200:
+            return True
+        else:
+            return False

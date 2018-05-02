@@ -55,6 +55,7 @@ def write_out_public_keys(public_keys):
         else:
             print('Failed to upload gist')
 
+
 def final_set():
     # Create json contact file.
     public_keys = {}
@@ -63,7 +64,7 @@ def final_set():
         if pub_key and pub_key.startswith('0x'):
             public_keys[pub_key] = {  # kept for json contacts file.
                 "name": {
-                    "en":  ' '.join([
+                    "en": ' '.join([
                         bamboo_details.get('firstName', ''),
                         bamboo_details.get('lastName', '')])
                 },

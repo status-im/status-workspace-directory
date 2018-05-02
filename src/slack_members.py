@@ -14,6 +14,7 @@ def map_member_ids():
     return {
         member['profile']['display_name']: member
         for member in res['members']
+        if member['deleted'] is False
     }
 
 
