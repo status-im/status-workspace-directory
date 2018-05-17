@@ -9,17 +9,6 @@ from github import get_issues_assigned_to, upload_contacts_to_gist
 from geekbot_standups import get_latest_standup
 
 
-_, employees_name_map = get_employees()
-slack_profile_map = map_member_ids()
-
-
-# Map for looking up slack profiles for a given bamboo id.
-bamboo_id_slack_user_map = {
-    employees_name_map[slack_name]["id"]: slack_user
-    for slack_name, slack_user in slack_profile_map.items() if employees_name_map.get(slack_name)
-}
-
-
 def gh_username(instr):
     if not instr:
         return None
@@ -36,8 +25,9 @@ def add_trailing_slash(instr, length=245):
 def write_out_public_keys(public_keys):
 
     existing_contacts = {}
-    if Path('contacts.json').exists():
-        with open('contacts.json', 'r') as f:
+    contacts_path = '/tmp/contacts.json'
+    if Path(contacts_path).exists():
+        with open(contacts_path, 'r') as f:
             existing_contacts = json.load(f)
 
     updated_contacts = False
@@ -48,15 +38,26 @@ def write_out_public_keys(public_keys):
 
     if updated_contacts:
         print('New public key(s) found writing contacts.json')
-        with open('contacts.json', 'w') as f:
+        with open(contacts_path, 'w') as f:
             json.dump(public_keys, f)
-        if upload_contacts_to_gist('contacts.json'):
+        if upload_contacts_to_gist(contacts_path):
             print('Uploaded gist successfully')
         else:
             print('Failed to upload gist')
 
 
 def final_set():
+    # Fetch from bamboo
+    _, employees_name_map = get_employees()
+    # Fetch from slack
+    slack_profile_map = map_member_ids()
+
+    # Map for looking up slack profiles for a given bamboo id.
+    bamboo_id_slack_user_map = {
+        employees_name_map[slack_name]["id"]: slack_user
+        for slack_name, slack_user in slack_profile_map.items() if employees_name_map.get(slack_name)
+    }
+
     # Create json contact file.
     public_keys = {}
     for _, bamboo_details in employees_name_map.items():
