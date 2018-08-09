@@ -1,17 +1,12 @@
 ## Slack Work Directory
 
 Slack Work Directory (SWD) - is a scheduled script that pulls useful information from Github, Geekbot and the BambooHR APIs.
-By setting the following fields in an employee's Bamboo HR profile:
-
-- _Skype_ field to the employee's slack username.
-- _Facebook_ field to the employee's github username.
-- _Twitter Feed_ field to the employee's Status Public Key (retrieved from Status App Profile page)
 
 The Slack Work Directory script can automatically set some extra info fields for the employee's Slack profile fields (https://get.slack.help/hc/en-us/articles/212281478-Customize-member-profiles).
 
 ## BambooHR
 
-Job title, phone number, hire date, manager and status public key (Twitter Feed) are retrieved from BambooHR and set on slack.
+Job title, phone number, hire date, manager and status public key are retrieved from BambooHR and set on slack.
 
 ## Github Ideas
 
@@ -25,10 +20,10 @@ This is set in the "Latest standup" field on slack.
 
 ## Required Environment Variables
 
-BAMBOO_HR_TOKEN  
-SLACK_BOT_TOKEN  
-SLACK_API_TOKEN  
-GEEKBOT_API_TOKEN  
+BAMBOO_HR_TOKEN
+SLACK_BOT_TOKEN
+SLACK_API_TOKEN
+GEEKBOT_API_TOKEN
 
 ## Run in docker
 

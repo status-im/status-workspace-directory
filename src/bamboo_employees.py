@@ -20,7 +20,11 @@ def get_employees():
     resp = requests.get(url, headers=headers)
 
     employees = resp.json()["employees"]
-    employees_name_map = {emp["skypeUsername"].lower(): emp for emp in employees if emp["skypeUsername"]}
+    employees_name_map = {}
+    for emp in employees:
+        emp_data = get_employee(emp['id'])
+        if emp_data['customSlackusername']:
+            employees_name_map[emp_data['customSlackusername']] = emp.update(emp_data)
 
     return employees, employees_name_map
 
@@ -32,7 +36,11 @@ def get_employee(employee_id):
     )
 
     params = {
-        'fields': ','.join(('supervisor', 'supervisorId', 'supervisorEId', 'hireDate'))
+        'fields': ','.join((
+            'supervisor', 'supervisorId', 'supervisorEId',
+            'hireDate', 'customGitHubusername', 'customStatusPublicKey',
+            'customSlackusername'
+        ))
     }
     resp = requests.get(url, params=params, headers=headers)
 

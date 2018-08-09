@@ -61,7 +61,7 @@ def final_set():
     # Create json contact file.
     public_keys = {}
     for _, bamboo_details in employees_name_map.items():
-        pub_key = bamboo_details["twitterFeed"]
+        pub_key = bamboo_details["customStatusPublicKey"]
         if pub_key and pub_key.startswith('0x'):
             public_keys[pub_key] = {  # kept for json contacts file.
                 "name": {
@@ -82,7 +82,7 @@ def final_set():
             continue
 
         try:
-            github_username = gh_username(bamboo_details["facebook"])
+            github_username = gh_username(bamboo_details["customGitHubusername"])
 
             # Get assigned issues
             assigned_issues = []
@@ -90,8 +90,7 @@ def final_set():
                 assigned_issues = get_issues_assigned_to(github_username)
 
             # Get supervisor
-            bamboo_extra_details = get_employee(bamboo_details["id"])
-            slack_supervisor_id = bamboo_id_slack_user_map.get(bamboo_extra_details["supervisorEId"], {}).get("id", "")
+            slack_supervisor_id = bamboo_id_slack_user_map.get(bamboo_details["supervisorEId"], {}).get("id", "")
 
             # Get last standup
             standup = get_latest_standup(slack_user["id"])
@@ -108,7 +107,7 @@ def final_set():
                 "phone": bamboo_details["mobilePhone"],
                 "fields": {
                     "Xf8LSC9MEC": {  # Start Date
-                        "value": bamboo_extra_details["hireDate"],
+                        "value": bamboo_details["hireDate"],
                         "alt": ""
                     },
                     "Xf8ME3KUM9": {  # Github
@@ -130,8 +129,8 @@ def final_set():
                 }
             }
 
-            if bamboo_details["twitterFeed"]:
-                pub_key = bamboo_details["twitterFeed"]
+            if bamboo_details["customStatusPublicKey"]:
+                pub_key = bamboo_details["customStatusPublicKey"]
                 payload["fields"]["Xf8MDHK94H"] = {  # Set Status Public Key
                     "value": pub_key,
                     "alt": ""
