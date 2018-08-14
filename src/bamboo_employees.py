@@ -24,7 +24,8 @@ def get_employees():
     for emp in employees:
         emp_data = get_employee(emp['id'])
         if emp_data['customSlackusername']:
-            employees_name_map[emp_data['customSlackusername']] = emp.update(emp_data)
+            emp.update(emp_data)
+            employees_name_map[emp_data['customSlackusername']] = emp
 
     return employees, employees_name_map
 

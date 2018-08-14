@@ -17,11 +17,6 @@ def gh_username(instr):
     return instr
 
 
-def add_trailing_slash(instr, length=245):
-    if len(instr) >= length:
-        return instr[:length] + '...'
-
-
 def write_out_public_keys(public_keys):
 
     existing_contacts = {}
@@ -92,16 +87,6 @@ def final_set():
             # Get supervisor
             slack_supervisor_id = bamboo_id_slack_user_map.get(bamboo_details["supervisorEId"], {}).get("id", "")
 
-            # Get last standup
-            standup = get_latest_standup(slack_user["id"])
-            standup_str = ""
-            if standup:
-                sarr = []
-                for question in standup["questions"]:
-                    # sarr.append(question["question"])
-                    sarr.append(question["answer"].replace('<br />', ';'))
-                standup_str = " ".join(sarr)
-
             payload = {
                 "title": bamboo_details["jobTitle"],
                 "phone": bamboo_details["mobilePhone"],
@@ -120,10 +105,6 @@ def final_set():
                     },
                     "Xf8QLU2BPA": {  # Current Ideas
                         "value": ",".join([issue["title"] + " " + issue["url"] for issue in assigned_issues]),
-                        "alt": ""
-                    },
-                    "Xf8QPT2ECR": {  # Latest standup
-                        "value": add_trailing_slash(standup_str),
                         "alt": ""
                     },
                 }
