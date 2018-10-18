@@ -21,13 +21,15 @@ def get_employees():
 
     employees = resp.json()["employees"]
     employees_name_map = {}
+    employees_list = []
     for emp in employees:
         emp_data = get_employee(emp['id'])
+        emp.update(emp_data)
+        employees_list.append(emp)
         if emp_data['customSlackusername']:
-            emp.update(emp_data)
             employees_name_map[emp_data['customSlackusername']] = emp
 
-    return employees, employees_name_map
+    return employees_list, employees_name_map
 
 
 def get_employee(employee_id):

@@ -43,7 +43,7 @@ def write_out_public_keys(public_keys):
 
 def final_set():
     # Fetch from bamboo
-    _, employees_name_map = get_employees()
+    employees_list, employees_name_map = get_employees()
     # Fetch from slack
     slack_profile_map = map_member_ids()
 
@@ -55,7 +55,7 @@ def final_set():
 
     # Create json contact file.
     public_keys = {}
-    for _, bamboo_details in employees_name_map.items():
+    for bamboo_details in employees_list:
         pub_key = bamboo_details["customStatusPublicKey"]
         if pub_key and pub_key.startswith('0x'):
             public_keys[pub_key] = {  # kept for json contacts file.
