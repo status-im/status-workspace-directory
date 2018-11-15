@@ -1,6 +1,5 @@
 import os
 import requests
-from requests.auth import HTTPBasicAuth
 
 GIST_API_USER = os.environ.get('GIST_API_USER')
 GIST_API_KEY = os.environ.get('GIST_API_KEY')

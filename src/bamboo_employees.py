@@ -26,8 +26,6 @@ def get_employees():
         emp_data = get_employee(emp['id'])
         emp.update(emp_data)
         employees_list.append(emp)
-        if emp_data['customSlackusername']:
-            employees_name_map[emp_data['customSlackusername']] = emp
 
     return employees_list, employees_name_map
 
@@ -42,7 +40,6 @@ def get_employee(employee_id):
         'fields': ','.join((
             'supervisor', 'supervisorId', 'supervisorEId',
             'hireDate', 'customGitHubusername', 'customStatusPublicKey',
-            'customSlackusername'
         ))
     }
     resp = requests.get(url, params=params, headers=headers)

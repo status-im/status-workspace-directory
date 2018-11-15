@@ -2,11 +2,10 @@
 import json
 import time
 
+from datetime import datetime
 from pathlib import Path
-from slack_members import map_member_ids, set_profile, get_profile
-from bamboo_employees import get_employees, get_employee
-from github import get_issues_assigned_to, upload_contacts_to_gist
-from geekbot_standups import get_latest_standup
+from bamboo_employees import get_employees
+from github import upload_contacts_to_gist
 
 
 def gh_username(instr):
@@ -36,22 +35,16 @@ def write_out_public_keys(public_keys):
         with open(contacts_path, 'w') as f:
             json.dump(public_keys, f)
         if upload_contacts_to_gist(contacts_path):
-            print('Uploaded gist successfully')
+            print(datetime.now().isoformat(), 'Uploaded gist successfully')
         else:
-            print('Failed to upload gist')
+            print(datetime.now().isoformat(), 'Failed to upload gist')
+    else:
+        print(datetime.now().isoformat(), 'Nothing new to upload.')
 
 
 def final_set():
     # Fetch from bamboo
     employees_list, employees_name_map = get_employees()
-    # Fetch from slack
-    slack_profile_map = map_member_ids()
-
-    # Map for looking up slack profiles for a given bamboo id.
-    bamboo_id_slack_user_map = {
-        employees_name_map[slack_name]["id"]: slack_user
-        for slack_name, slack_user in slack_profile_map.items() if employees_name_map.get(slack_name)
-    }
 
     # Create json contact file.
     public_keys = {}
@@ -69,63 +62,6 @@ def final_set():
                 "dapp?": False
             }
     write_out_public_keys(public_keys)
-
-    for slack_name, slack_user in slack_profile_map.items():
-        bamboo_details = employees_name_map.get(slack_name)
-
-        if not bamboo_details:
-            continue
-
-        try:
-            github_username = gh_username(bamboo_details["customGitHubusername"])
-
-            # Get assigned issues
-            assigned_issues = []
-            if github_username:
-                assigned_issues = get_issues_assigned_to(github_username)
-
-            # Get supervisor
-            slack_supervisor_id = bamboo_id_slack_user_map.get(bamboo_details["supervisorEId"], {}).get("id", "")
-
-            payload = {
-                "title": bamboo_details["jobTitle"],
-                "phone": bamboo_details["mobilePhone"],
-                "fields": {
-                    "Xf8LSC9MEC": {  # Start Date
-                        "value": bamboo_details["hireDate"],
-                        "alt": ""
-                    },
-                    "Xf8ME3KUM9": {  # Github
-                        "value": github_username,
-                        "alt": ""
-                    },
-                    "Xf8NC9BLBG": {  # Manager
-                        "value": slack_supervisor_id or "",
-                        "alt": ""
-                    },
-                    "Xf8QLU2BPA": {  # Current Ideas
-                        "value": ",".join([issue["title"] + " " + issue["url"] for issue in assigned_issues]),
-                        "alt": ""
-                    },
-                }
-            }
-
-            if bamboo_details["customStatusPublicKey"]:
-                pub_key = bamboo_details["customStatusPublicKey"]
-                payload["fields"]["Xf8MDHK94H"] = {  # Set Status Public Key
-                    "value": pub_key,
-                    "alt": ""
-                }
-
-            res = set_profile(slack_user["id"], payload)
-        except Exception as e:
-            print(e)
-            res = {'ok': False}
-
-        if not res['ok']:
-            print('Failed to set: ' + slack_name)
-        else:
-            print('Profile set: ', slack_name)
 
 
 if __name__ == '__main__':
