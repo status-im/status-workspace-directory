@@ -38,8 +38,9 @@ def get_employee(employee_id):
 
     params = {
         'fields': ','.join((
-            'supervisor', 'supervisorId', 'supervisorEId',
+            'supervisor', 'supervisorId', 'supervisorEId', 'preferredName',
             'hireDate', 'customGitHubusername', 'customStatusPublicKey',
+            'department',
         ))
     }
     resp = requests.get(url, params=params, headers=headers)

@@ -50,13 +50,13 @@ def final_set():
     public_keys = {}
     for bamboo_details in employees_list:
         pub_key = bamboo_details["customStatusPublicKey"]
-        if pub_key and pub_key.startswith('0x'):
+        if pub_key:
+            name = bamboo_details['preferredName'] if bamboo_details['preferredName'] else bamboo_details['firstName']
             public_keys[pub_key] = {  # kept for json contacts file.
                 "name": {
-                    "en": ' '.join([
-                        bamboo_details.get('firstName', ''),
-                        bamboo_details.get('lastName', '')])
+                    "en": name
                 },
+                "department": bamboo_details['department'],
                 "photo-path": bamboo_details.get('photoUrl', ''),
                 "add-chat?": False,
                 "dapp?": False
